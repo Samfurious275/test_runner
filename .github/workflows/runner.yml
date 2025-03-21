@@ -29,5 +29,5 @@ jobs:
       - name: Run calculator tests
         run: |
           echo "Running tests for Python 3.10 on Ubuntu"
-          pytest --junitxml=test-results/results.xml tests/
+          PYTHONPATH=${{ github.workspace }} pytest --junitxml=test-results/results.xml tests/
 

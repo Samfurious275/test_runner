@@ -47,6 +47,3 @@ def main():
             print("Invalid operation selected.")
     except ValueError as e:
         print(f"Error: {e}")
-
-if __name__ == "__main__":
-    main()
