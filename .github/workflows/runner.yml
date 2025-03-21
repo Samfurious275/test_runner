@@ -1,0 +1,47 @@
+name: Python CI/CD Pipeline with Matrix Builds
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  PYTHON_VERSIONS: ["3.8", "3.9", "3.10"]
+  OS_TYPES: ["ubuntu-latest", "windows-latest", "macos-latest"]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        python-version: ${{ env.PYTHON_VERSIONS }}
+        os: ${{ env.OS_TYPES }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          echo "Running tests for Python ${{ matrix.python-version }} on ${{ matrix.os }}"
+          pytest
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: ./test-results/
