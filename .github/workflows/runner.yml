@@ -10,7 +10,7 @@ on:
 
 jobs:
   test-calculator:
-    runs-on: ubuntu-latest # Single OS (you can change this to windows-latest or macos-latest if needed)
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10" # Single Python version (you can change this to 3.8 or 3.9 if needed)
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -29,5 +29,11 @@ jobs:
       - name: Run calculator tests
         run: |
           echo "Running tests for Python 3.10 on Ubuntu"
-          pytest --junitxml=test-results/results.xml
+          pytest --junitxml=test-results/results.xml tests/
 
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/results.xml
