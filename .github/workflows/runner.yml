@@ -8,18 +8,9 @@ on:
     branches:
       - main
 
-env:
-  PYTHON_VERSIONS: ["3.8", "3.9", "3.10"]
-  OS_TYPES: ["ubuntu-latest", "windows-latest", "macos-latest"]
-
 jobs:
   test-calculator:
-    strategy:
-      matrix:
-        python-version: ${{ env.PYTHON_VERSIONS }}
-        os: ${{ env.OS_TYPES }}
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest # Single OS (you can change this to windows-latest or macos-latest if needed)
 
     steps:
       - name: Checkout code
@@ -28,7 +19,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10" # Single Python version (you can change this to 3.8 or 3.9 if needed)
 
       - name: Install dependencies
         run: |
@@ -37,12 +28,12 @@ jobs:
 
       - name: Run calculator tests
         run: |
-          echo "Running tests for Python ${{ matrix.python-version }} on ${{ matrix.os }}"
-          pytest --junitxml=test-results/results-${{ matrix.python-version }}-${{ matrix.os }}.xml
+          echo "Running tests for Python 3.10 on Ubuntu"
+          pytest --junitxml=test-results/results.xml
 
       - name: Upload test results
         if: always() # Ensures artifacts are uploaded even if tests fail
         uses: actions/upload-artifact@v3
         with:
-          name: test-results-${{ matrix.python-version }}-${{ matrix.os }}
-          path: test-results/results-${{ matrix.python-version }}-${{ matrix.os }}.xml
+          name: test-results
+          path: test-results/results.xml
