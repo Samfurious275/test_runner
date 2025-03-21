@@ -1,4 +1,4 @@
-name: Python CI/CD Pipeline with Matrix Builds
+name: Python Calculator CI/CD Pipeline
 
 on:
   push:
@@ -13,7 +13,7 @@ env:
   OS_TYPES: ["ubuntu-latest", "windows-latest", "macos-latest"]
 
 jobs:
-  build-and-test:
+  test-calculator:
     strategy:
       matrix:
         python-version: ${{ env.PYTHON_VERSIONS }}
@@ -35,13 +35,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run tests
+      - name: Run calculator tests
         run: |
           echo "Running tests for Python ${{ matrix.python-version }} on ${{ matrix.os }}"
-          pytest
+          pytest --junitxml=test-results/results-${{ matrix.python-version }}-${{ matrix.os }}.xml
 
       - name: Upload test results
+        if: always() # Ensures artifacts are uploaded even if tests fail
         uses: actions/upload-artifact@v3
         with:
           name: test-results-${{ matrix.python-version }}-${{ matrix.os }}
-          path: ./test-results/
+          path: test-results/results-${{ matrix.python-version }}-${{ matrix.os }}.xml
